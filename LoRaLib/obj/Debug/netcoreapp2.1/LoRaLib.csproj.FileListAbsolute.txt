@@ -1,0 +1,9 @@
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\bin\Debug\netcoreapp2.1\LoRaLib.deps.json
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\bin\Debug\netcoreapp2.1\LoRaLib.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\obj\Debug\netcoreapp2.1\LoRaLib.csprojAssemblyReference.cache
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\obj\Debug\netcoreapp2.1\LoRaLib.csproj.CoreCompileInputs.cache
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\obj\Debug\netcoreapp2.1\LoRaLib.AssemblyInfoInputs.cache
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\obj\Debug\netcoreapp2.1\LoRaLib.AssemblyInfo.cs
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\bin\Debug\netcoreapp2.1\LoRaLib.pdb
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\obj\Debug\netcoreapp2.1\LoRaLib.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLib\obj\Debug\netcoreapp2.1\LoRaLib.pdb

@@ -1,0 +1,17 @@
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\xunit.runner.reporters.netcoreapp10.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\xunit.runner.utility.netcoreapp10.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLibTest.deps.json
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLibTest.runtimeconfig.json
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLibTest.runtimeconfig.dev.json
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLibTest.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLibTest.pdb
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLib.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\bin\Debug\netcoreapp2.1\LoRaLib.pdb
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.csprojAssemblyReference.cache
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.csproj.CoreCompileInputs.cache
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.AssemblyInfoInputs.cache
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.AssemblyInfo.cs
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.csproj.CopyComplete
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.dll
+C:\Users\mikha\source\repos\LoRaLib\LoRaLibTest\obj\Debug\netcoreapp2.1\LoRaLibTest.pdb
