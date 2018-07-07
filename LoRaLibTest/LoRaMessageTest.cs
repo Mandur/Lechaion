@@ -32,7 +32,7 @@ namespace LoRaWanTest
             byte[] joinAcceptMic = new byte[4]{
                 67, 72, 91, 188
                 };
-            Assert.True((((LoRaPayloadJoinAccept)joinAcceptMessage.payloadMessage).mic.SequenceEqual(joinAcceptMic)));
+            Assert.True((((LoRaPayloadJoinAccept)joinAcceptMessage.payloadMessage).mic.ToArray().SequenceEqual(joinAcceptMic)));
 
             var msg = BitConverter.ToString(((LoRaPayloadJoinAccept)joinAcceptMessage.payloadMessage).ToMessage()).Replace("-", String.Empty);
             Assert.Equal("20493EEB51FBA2116F810EDB3742975142", msg);
@@ -178,7 +178,7 @@ namespace LoRaWanTest
             {
                 181, 106, 14, 117
             };
-            Assert.Equal(testMic, lora.mic);
+            Assert.Equal(testMic, lora.mic.ToArray());
             var mess = lora.ToMessage();
             //TODO
 

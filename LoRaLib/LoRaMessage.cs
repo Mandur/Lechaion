@@ -13,134 +13,7 @@ using System.Text;
 namespace LoRaLib
 {
 
-    public enum PhysicalIdentifier
-    {
-        PUSH_DATA, PUSH_ACK, PULL_DATA, PULL_RESP, PULL_ACK, TX_ACK
-    }
-
-    /// <summary>
-    /// The Physical Payload wrapper
-    /// </summary>
-    public class PhysicalPayload
-    {
-
-        //case of inbound messages
-        public PhysicalPayload(byte[] input)
-        {
-
-            protocolVersion = input[0];
-            Array.Copy(input, 1, token, 0, 2);
-            identifier = (PhysicalIdentifier)input[3];
-
-            //PUSH_DATA That packet type is used by the gateway mainly to forward the RF packets received, and associated metadata, to the server
-            if (identifier == PhysicalIdentifier.PUSH_DATA)
-            {
-                Array.Copy(input, 4, gatewayIdentifier, 0, 8);
-                message = new byte[input.Length - 12];
-                Array.Copy(input, 12, message, 0, input.Length - 12);
-            }
-
-            //PULL_DATA That packet type is used by the gateway to poll data from the server.
-            if (identifier == PhysicalIdentifier.PULL_DATA)
-            {
-                Array.Copy(input, 4, gatewayIdentifier, 0, 8);
-            }
-
-            //TX_ACK That packet type is used by the gateway to send a feedback to the to inform if a downlink request has been accepted or rejected by the gateway.
-            if (identifier == PhysicalIdentifier.TX_ACK)
-            {
-                Console.WriteLine("TX ACK RECEIVED");
-                Array.Copy(input, 4, gatewayIdentifier, 0, 8);
-                if (input.Length - 12 > 0)
-                {
-                    message = new byte[input.Length - 12];
-                    Array.Copy(input, 12, message, 0, input.Length - 12);
-                }
-            }
-        }
-
-        //downlink transmission
-        public PhysicalPayload(byte[] _token, PhysicalIdentifier type, byte[] _message)
-        {
-            //0x01 PUSH_ACK That packet type is used by the server to acknowledge immediately all the PUSH_DATA packets received.
-            //0x04 PULL_ACK That packet type is used by the server to confirm that the network route is open and that the server can send PULL_RESP packets at any time.
-            if (type == PhysicalIdentifier.PUSH_ACK || type == PhysicalIdentifier.PULL_ACK)
-            {
-                token = _token;
-                identifier = type;
-            }
-
-            //0x03 PULL_RESP That packet type is used by the server to send RF packets and  metadata that will have to be emitted by the gateway.
-            if (type == PhysicalIdentifier.PULL_RESP)
-            {
-                token = _token;
-                identifier = type;
-                message = new byte[_message.Length];
-                Array.Copy(_message, 0, message, 0, _message.Length);
-
-            }
-
-        }
-
-        //1 byte
-        public byte protocolVersion = 2;
-        //1-2 bytes
-        public byte[] token = new byte[2];
-        //1 byte
-        public PhysicalIdentifier identifier;
-        //8 bytes
-        public byte[] gatewayIdentifier = new byte[8];
-        //0-unlimited
-        public byte[] message;
-
-        public byte[] GetMessage()
-        {
-            List<byte> returnList = new List<byte>();
-            returnList.Add(protocolVersion);
-            returnList.AddRange(token);
-            returnList.Add((byte)identifier);
-            if (identifier == PhysicalIdentifier.PULL_DATA ||
-                identifier == PhysicalIdentifier.TX_ACK ||
-                identifier == PhysicalIdentifier.PUSH_DATA
-                )
-                returnList.AddRange(gatewayIdentifier);
-            if (message != null)
-                returnList.AddRange(message);
-            return returnList.ToArray();
-        }
-    }
-    public class Txpk
-    {
-        public bool imme;
-        public string data;
-        public long tmst;
-        public uint size;
-        public double freq; //868
-        public uint rfch;
-        public string modu;
-        public string datr;
-        public string codr;
-        public uint powe;
-        public bool ipol;
-    }
-
-    public class Rxpk
-    {
-        public string time;
-        public uint tmms;
-        public uint tmst;
-        public double freq; //868
-        public uint chan;
-        public uint rfch;
-        public int stat;
-        public string modu;
-        public string datr;
-        public string codr;
-        public int rssi;
-        public float lsnr;
-        public uint size;
-        public string data;
-    }
+  
 
     #region LoRaGenericPayload
     /// <summary>
@@ -155,12 +28,12 @@ namespace LoRaLib
         /// <summary>
         /// MACHeader of the message
         /// </summary>
-        public byte[] mhdr;
+        public Memory<byte> mhdr;
 
         /// <summary>
         /// Message Integrity Code
         /// </summary>
-        public byte[] mic;
+        public Memory<byte> mic;
 
 
         /// <summary>
@@ -178,9 +51,8 @@ namespace LoRaLib
         {
             rawMessage = inputMessage;
             //get the mhdr
-            byte[] mhdr = new byte[1];
-            Array.Copy(inputMessage, 0, mhdr, 0, 1);
-            this.mhdr = mhdr;
+            this.mhdr = inputMessage;
+            mhdr.Slice(0, 1);
 
             //MIC 4 last bytes
             byte[] mic = new byte[4];
@@ -265,7 +137,7 @@ namespace LoRaLib
             mac.BlockUpdate(algoinput, 0, algoinput.Length);
             result = MacUtilities.DoFinal(mac);
             mic = result.Take(4).ToArray();
-            return mic;
+            return mic.ToArray();
         }
 
         /// <summary>
@@ -348,18 +220,14 @@ namespace LoRaLib
 
             KeyParameter key = new KeyParameter(StringToByteArray(AppKey));
             mac.Init(key);
-            var appEUIStr = BitConverter.ToString(appEUI);
-            var devEUIStr = BitConverter.ToString(devEUI);
-            var devNonceStr = BitConverter.ToString(devNonce);
 
-            var micstr = BitConverter.ToString(mic);
-
-            var algoinput = mhdr.Concat(appEUI).Concat(devEUI).Concat(devNonce).ToArray();
+            byte[] tmp = new byte[0];
+            var algoinput = tmp.Concat(mhdr.ToArray()).Concat(appEUI).Concat(devEUI).Concat(devNonce).ToArray();
             byte[] result = new byte[19];
             mac.BlockUpdate(algoinput, 0, algoinput.Length);
             result = MacUtilities.DoFinal(mac);
             var resStr = BitConverter.ToString(result);
-            return mic.SequenceEqual(result.Take(4).ToArray());
+            return mic.ToArray().SequenceEqual(result.Take(4).ToArray());
         }
 
         public override string PerformEncryption(string appSkey)
@@ -421,11 +289,11 @@ namespace LoRaLib
         {
 
             //get direction
-            var checkDir = (mhdr[0] >> 5);
+            var checkDir = (mhdr.Span[0] >> 5);
             //in this case the payload is not downlink of our type
 
 
-            direction = (mhdr[0] & (1 << 6 - 1));
+            direction = (mhdr.Span[0] & (1 << 6 - 1));
 
             //get the address
             byte[] addrbytes = new byte[4];
@@ -494,7 +362,7 @@ namespace LoRaLib
             byte[] result = new byte[16];
             mac.BlockUpdate(algoinput, 0, algoinput.Length);
             result = MacUtilities.DoFinal(mac);
-            return mic.SequenceEqual(result.Take(4).ToArray());
+            return mic.ToArray().SequenceEqual(result.Take(4).ToArray());
         }
 
         public void SetMic(string nwskey)
@@ -574,7 +442,7 @@ namespace LoRaLib
         public override byte[] ToMessage()
         {
             List<byte> messageArray = new List<Byte>();
-            messageArray.AddRange(mhdr);
+            messageArray.AddRange(mhdr.ToArray());
             messageArray.AddRange(devAddr.Reverse().ToArray());
             messageArray.AddRange(fctrl);
             messageArray.AddRange(fcnt);
@@ -584,8 +452,8 @@ namespace LoRaLib
                 messageArray.AddRange(fport);
             if (frmpayload != null)
                 messageArray.AddRange(frmpayload);
-            if (mic != null)
-                messageArray.AddRange(mic);
+            if (!mic.IsEmpty)
+                messageArray.AddRange(mic.ToArray());
             return messageArray.ToArray();
         }
 
@@ -652,7 +520,7 @@ namespace LoRaLib
                 Array.Reverse(netID);
                 Array.Reverse(devAddr);
             }
-            var algoinput = mhdr.Concat(appNonce).Concat(netID).Concat(devAddr).Concat(dlSettings).Concat(rxDelay).ToArray();
+            var algoinput = mhdr.ToArray().Concat(appNonce).Concat(netID).Concat(devAddr).Concat(dlSettings).Concat(rxDelay).ToArray();
             if (cfList != null)
                 algoinput = algoinput.Concat(cfList).ToArray();
 
@@ -679,9 +547,9 @@ namespace LoRaLib
 
             byte[] pt;
             if (cfList != null)
-                pt = appNonce.Concat(netID).Concat(devAddr).Concat(rfu).Concat(rxDelay).Concat(cfList).Concat(mic).ToArray();
+                pt = appNonce.Concat(netID).Concat(devAddr).Concat(rfu).Concat(rxDelay).Concat(cfList).Concat(mic.ToArray()).ToArray();
             else
-                pt = appNonce.Concat(netID).Concat(devAddr).Concat(rfu).Concat(rxDelay).Concat(mic).ToArray();
+                pt = appNonce.Concat(netID).Concat(devAddr).Concat(rfu).Concat(rxDelay).Concat(mic.ToArray()).ToArray();
 
             byte[] ct = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
@@ -708,7 +576,7 @@ namespace LoRaLib
         public override byte[] ToMessage()
         {
             List<byte> messageArray = new List<Byte>();
-            messageArray.AddRange(mhdr);
+            messageArray.AddRange(mhdr.ToArray());
             messageArray.AddRange(rawMessage);
 
             return messageArray.ToArray();
