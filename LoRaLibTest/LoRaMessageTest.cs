@@ -3,6 +3,7 @@ using Xunit;
 using System.Text;
 using System.Linq;
 using LoRaLib;
+using LoRaLib.LoRaMessagePayload;
 
 namespace LoRaWanTest
 {
@@ -179,8 +180,8 @@ namespace LoRaWanTest
                 181, 106, 14, 117
             };
             Assert.Equal(testMic, lora.mic.ToArray());
-            var mess = lora.ToMessage();
-            //TODO
+            var mess = Convert.ToBase64String(lora.ToMessage());
+            Assert.Equal("gAQDAgEAAAAK4mTU97VqDnU=",mess);
 
         }
 
